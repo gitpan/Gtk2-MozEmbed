@@ -1,0 +1,15 @@
+ChangeLog
+LICENSE
+MANIFEST			This list of files
+MANIFEST.SKIP
+META.yml			Module meta-data (added by MakeMaker)
+Makefile.PL
+MozEmbed.pm
+NEWS
+README
+copyright.pod
+examples/pumzilla
+gtkmozembed2perl.h
+maps
+t/GtkMozEmbed.t
+xs/GtkMozEmbed.xs

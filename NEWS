@@ -1,0 +1,10 @@
+Overview of changes in Gtk2-MozEmbed 0.02
+=========================================
+
+* Add lots of documentation.
+
+Overview of changes in Gtk2-MozEmbed 0.01
+=========================================
+
+* Implement a custom marshaller for the new_window signal to make it usable.
+* Use LD_RUN_PATH to make sure we work (nearly, hopefully) everywhere.

@@ -7,7 +7,7 @@ use Config;
 use Cwd;
 use File::Spec;
 
-# $Header: /cvsroot/gtk2-perl/gtk2-perl-xs/Gtk2-MozEmbed/Makefile.PL,v 1.4 2004/08/27 21:02:13 kaffeetisch Exp $
+# $Header: /cvsroot/gtk2-perl/gtk2-perl-xs/Gtk2-MozEmbed/Makefile.PL,v 1.3 2004/08/16 17:15:53 kaffeetisch Exp $
 
 our %build_reqs = (
   'perl-ExtUtils-Depends'   => '0.20',
@@ -48,11 +48,6 @@ our %pod_files = (
 
 Gtk2::CodeGen->parse_maps('gtkmozembed2perl');
 Gtk2::CodeGen->write_boot(ignore => qr/^Gtk2::MozEmbed$/);
-
-ExtUtils::PkgConfig->write_version_macros (
-  "build/gtkmozembed2perl-version.h",
-  "mozilla-gtkmozembed" => "GTK_MOZ_EMBED",
-);
 
 my $mozembed = ExtUtils::Depends->new('Gtk2::MozEmbed', 'Gtk2');
 $mozembed->set_inc($pkgcfg{cflags});

@@ -15,7 +15,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * $Header: /cvsroot/gtk2-perl/gtk2-perl-xs/Gtk2-MozEmbed/gtkmozembed2perl.h,v 1.2 2004/08/27 21:02:13 kaffeetisch Exp $
+ * $Header: /cvsroot/gtk2-perl/gtk2-perl-xs/Gtk2-MozEmbed/gtkmozembed2perl.h,v 1.1 2004/08/16 00:13:45 kaffeetisch Exp $
  */
 
 #ifndef _GTKMOZEMBED2PERL_H_
@@ -24,25 +24,19 @@
 #include <gtk2perl.h>
 
 #include <gtkmozembed.h>
-#include "gtkmozembed2perl-version.h"
 
-#if 1 /* FIXME: !GTK_MOZ_EMBED_CHECK_VERSION (x, y, z) */
+#if 1 /* FIXME: use a version check here if/when a fix is incorporated
+	 upstream. */
 
-# undef GTK_TYPE_MOZ_EMBED_RELOAD_FLAGS
-# define GTK_TYPE_MOZ_EMBED_RELOAD_FLAGS (gtk2perl_moz_embed_reload_flags_get_type ())
-  GType gtk2perl_moz_embed_reload_flags_get_type (void);
+#undef GTK_TYPE_MOZ_EMBED_RELOAD_FLAGS
+#define GTK_TYPE_MOZ_EMBED_RELOAD_FLAGS (gtk2perl_moz_embed_reload_flags_get_type())
+GType gtk2perl_moz_embed_reload_flags_get_type (void);
 
-# undef GTK_TYPE_MOZ_EMBED_CHROME_FLAGS
-# define GTK_TYPE_MOZ_EMBED_CHROME_FLAGS (gtk2perl_moz_embed_chrome_flags_get_type ())
-  GType gtk2perl_moz_embed_chrome_flags_get_type (void);
+#undef GTK_TYPE_MOZ_EMBED_CHROME_FLAGS
+#define GTK_TYPE_MOZ_EMBED_CHROME_FLAGS (gtk2perl_moz_embed_chrome_flags_get_type())
+GType gtk2perl_moz_embed_chrome_flags_get_type (void);
 
 #endif
-
-/* #ifndef GTK_TYPE_MOZ_EMBED_SINGLE
- * # define GTK_TYPE_MOZ_EMBED_SINGLE (gtk_moz_embed_single_get_type ())
- *   extern GtkType gtk_moz_embed_single_get_type (void);
- * #endif
- */
 
 #include "gtkmozembed2perl-autogen.h"
 

@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Header: /cvsroot/gtk2-perl/gtk2-perl-xs/Gtk2-MozEmbed/examples/pumzilla,v 1.2 2004/08/27 21:02:51 kaffeetisch Exp $
+# $Header: /cvsroot/gtk2-perl/gtk2-perl-xs/Gtk2-MozEmbed/examples/pumzilla,v 1.1 2004/08/16 00:13:45 kaffeetisch Exp $
 
 package PumZilla;
 
@@ -151,7 +151,7 @@ sub INIT_INSTANCE {
 
     my $pumzilla = PumZilla -> new(chrome => $chrome);
 
-    $pumzilla -> set_default_size(600, 400);
+    $pumzilla -> set_default_size (600, 400);
     $pumzilla -> show_all();
 
     return $pumzilla -> { _embed };
@@ -176,12 +176,12 @@ use Gtk2 -init;
 
 my $pumzilla = PumZilla -> new();
 
-$pumzilla -> signal_connect(delete_event => sub {
+$pumzilla -> signal_connect (delete_event => sub {
   Gtk2 -> main_quit;
   return FALSE;
 });
 
-$pumzilla -> set_default_size(600, 400);
+$pumzilla -> set_default_size (600, 400);
 $pumzilla -> show_all();
 
 Gtk2 -> main;

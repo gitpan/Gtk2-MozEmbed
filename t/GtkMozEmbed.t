@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Header: /cvsroot/gtk2-perl/gtk2-perl-xs/Gtk2-MozEmbed/t/GtkMozEmbed.t,v 1.2 2004/08/27 21:02:51 kaffeetisch Exp $
+# $Header: /cvsroot/gtk2-perl/gtk2-perl-xs/Gtk2-MozEmbed/t/GtkMozEmbed.t,v 1.1 2004/08/16 00:13:45 kaffeetisch Exp $
 
 use strict;
 use warnings;
@@ -27,16 +27,10 @@ ok(not $moz -> can_go_forward());
 $moz -> go_back();
 $moz -> go_forward();
 
-# my $window = Gtk2::Window -> new();
-# $window -> add($moz);
-# $window -> realize();
-# $moz -> show_all();
-# $window -> show_all();
-
 # segfault: $moz -> render_data("<html></html>", $uri, "text/html");
-#           $moz -> open_stream($uri, "text/html");
-#           $moz -> append_data("<!-- bla -->");
-#           $moz -> close_stream();
+# assertion: $moz -> open_stream($uri, "text/html");
+#            $moz -> close_stream();
+#            $moz -> append_data("<!-- bla -->");
 
 is($moz -> get_link_message(), undef);
 is($moz -> get_js_status(), undef);
@@ -47,6 +41,3 @@ $moz -> reload([qw/reloadnormal reloadbypassproxyandcache/]);
 
 $moz -> set_chrome_mask([qw/defaultchrome modal/]);
 is_deeply($moz -> get_chrome_mask(), [qw/defaultchrome modal/]);
-
-# my $single = Gtk2::MozEmbedSingle -> new();
-# isa_ok($single, "Gtk2::MozEmbedSingle");

@@ -1,25 +1,3 @@
-2004/09/11 17:23 (+0200) kaffeetisch
-
-	* META.yml, MozEmbed.pm, NEWS: Version 0.02.
-
-2004/09/11 17:20 (+0200) kaffeetisch
-
-	* MozEmbed.pm: Add a SYNOPSIS example.
-
-2004/08/27 22:59 (+0200) kaffeetisch
-
-	* Makefile.PL: Generate version macros in
-	gtkmozembed2perl-version.h
-
-	* pumzilla: Some whitespace fixes.
-
-	* GtkMozEmbed.xs: Add lots of POD for nearly all the functions and
-	signals.
-
-	* gtkmozembed2perl.h, maps, t/GtkMozEmbed.t, xs/GtkMozEmbed.xs:
-	Add commented out support for GtkMozEmbedSingle, blocking on an
-	upstream bug.
-
 2004/08/16 19:14 (+0200) kaffeetisch
 
 	* MANIFEST: Add ChangeLog and NEWS.

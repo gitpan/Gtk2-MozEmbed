@@ -1,6 +1,11 @@
 #!/usr/bin/perl
 
+# $Header: /cvsroot/gtk2-perl/gtk2-perl-xs/Gtk2-MozEmbed/examples/pumzilla,v 1.2 2004/08/27 21:02:51 kaffeetisch Exp $
+
 package PumZilla;
+
+# This is largely inspired by muppet's Gtk2::Html2 demonstration example
+# MupZilla.
 
 use strict;
 use warnings;
@@ -9,10 +14,19 @@ use Gtk2;
 use Gtk2::MozEmbed;
 
 use Glib::Object::Subclass
-  Gtk2::Window::;
+  Gtk2::Window::,
+  properties => [
+    Glib::ParamSpec -> flags("chrome",
+                             "Chrome",
+                             "The chrome to be applied",
+                             "Gtk2::MozEmbed::Chrome",
+                             "allchrome",
+                             [qw/readable writable/])
+  ];
 
 sub INIT_INSTANCE {
   my ($self) = @_;
+  my $chrome = $self -> get("chrome");
 
   $self -> set_title("PumZilla");
 
@@ -63,7 +77,8 @@ sub INIT_INSTANCE {
   $entry_item -> add($entry);
   $entry_item -> set_expand(TRUE);
   $entry_item -> set_border_width(4);
-  $embed -> set_chrome_mask(qw/allchrome/);
+
+  $embed -> set_chrome_mask($chrome);
   $embed -> load_url("about:blank");
 
   $bar -> insert($back, 0);
@@ -112,8 +127,8 @@ sub INIT_INSTANCE {
 
   $embed -> signal_connect(net_stop => sub {
     $status -> push($context_id, "");
-    $stop -> set_sensitive(FALSE);
 
+    $stop -> set_sensitive(FALSE);
     $back -> set_sensitive($embed -> can_go_back());
     $forward -> set_sensitive($embed -> can_go_forward());
 
@@ -131,10 +146,23 @@ sub INIT_INSTANCE {
     }
   });
 
+  $embed -> signal_connect(new_window => sub {
+    my ($embed, $chrome) = @_;
+
+    my $pumzilla = PumZilla -> new(chrome => $chrome);
+
+    $pumzilla -> set_default_size(600, 400);
+    $pumzilla -> show_all();
+
+    return $pumzilla -> { _embed };
+  });
+
   $box -> show_all();
   $self -> add($box);
 
   $entry -> grab_focus();
+
+  $self -> { _embed } = $embed;
 }
 
 ###############################################################################
@@ -148,12 +176,12 @@ use Gtk2 -init;
 
 my $pumzilla = PumZilla -> new();
 
-$pumzilla -> signal_connect (delete_event => sub {
+$pumzilla -> signal_connect(delete_event => sub {
   Gtk2 -> main_quit;
   return FALSE;
 });
 
-$pumzilla -> set_default_size (600, 400);
+$pumzilla -> set_default_size(600, 400);
 $pumzilla -> show_all();
 
 Gtk2 -> main;

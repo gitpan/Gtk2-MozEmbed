@@ -3,15 +3,16 @@ use 5.008;
 use strict;
 
 use ExtUtils::MakeMaker;
+use Config;
 use Cwd;
 use File::Spec;
 
-# $Header$
+# $Header: /cvsroot/gtk2-perl/gtk2-perl-xs/Gtk2-MozEmbed/Makefile.PL,v 1.5 2005/02/27 22:03:49 kaffeetisch Exp $
 
 our %build_reqs = (
   'perl-ExtUtils-Depends'   => '0.20',
   'perl-ExtUtils-PkgConfig' => '1.03',
-  'perl-Glib'               => '1.053',
+  'perl-Glib'               => '1.06',
   'perl-Gtk2'               => '1.00',
   'GtkMozEmbed'             => '1.7',
 );
@@ -48,6 +49,11 @@ our %pod_files = (
 Gtk2::CodeGen->parse_maps('gtkmozembed2perl');
 Gtk2::CodeGen->write_boot(ignore => qr/^Gtk2::MozEmbed$/);
 
+ExtUtils::PkgConfig->write_version_macros (
+  "build/gtkmozembed2perl-version.h",
+  "mozilla-gtkmozembed" => "GTK_MOZ_EMBED",
+);
+
 my $mozembed = ExtUtils::Depends->new('Gtk2::MozEmbed', 'Gtk2');
 $mozembed->set_inc($pkgcfg{cflags});
 $mozembed->set_libs($pkgcfg{libs});
@@ -58,12 +64,16 @@ $mozembed->add_typemaps(map {File::Spec->catfile(cwd(), $_)} 'build/gtkmozembed2
 $mozembed->install(qw(gtkmozembed2perl.h build/gtkmozembed2perl-autogen.h));
 $mozembed->save_config('build/IFiles.pm');
 
+my $libdir = `pkg-config --variable=libdir mozilla-gtkmozembed`;
+chomp($libdir);
+
 WriteMakefile(
   NAME          => 'Gtk2::MozEmbed',
   VERSION_FROM  => 'MozEmbed.pm',
   ABSTRACT_FROM => 'MozEmbed.pm',
   XSPROTOARG    => '-noprototypes',
   MAN3PODS      => \%pod_files,
+  LD            => "LD_RUN_PATH=$libdir $Config{ld}",
   $mozembed->get_makefile_vars,
 );
 

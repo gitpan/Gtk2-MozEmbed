@@ -15,10 +15,11 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * $Header$
+ * $Header: /cvsroot/gtk2-perl/gtk2-perl-xs/Gtk2-MozEmbed/xs/GtkMozEmbed.xs,v 1.2 2004/08/27 21:02:51 kaffeetisch Exp $
  */
 
 #include "gtkmozembed2perl.h"
+#include "gperl_marshal.h"
 
 /* ------------------------------------------------------------------------- */
 
@@ -81,31 +82,87 @@ gtk2perl_moz_embed_chrome_flags_get_type(void)
 
 /* ------------------------------------------------------------------------- */
 
+static void
+gtk2perl_moz_embed_new_window_marshal (GClosure *closure,
+                                       GValue *return_value,
+                                       guint n_param_values,
+                                       const GValue *param_values,
+                                       gpointer invocation_hint,
+                                       gpointer marshal_data)
+{
+	dGPERL_CLOSURE_MARSHAL_ARGS;
+	GtkMozEmbed **embed;
+
+	GPERL_CLOSURE_MARSHAL_INIT (closure, marshal_data);
+
+	ENTER;
+	SAVETMPS;
+
+	PUSHMARK (SP);
+
+	GPERL_CLOSURE_MARSHAL_PUSH_INSTANCE (param_values);
+
+	/* param_values + 1 is the pointer we're supposed to fill.
+	 * param_values + 2 is the chrome mask. */
+	XPUSHs (sv_2mortal (newSVGtkMozEmbedChromeFlags
+	                     (g_value_get_uint (param_values + 2))));
+
+	GPERL_CLOSURE_MARSHAL_PUSH_DATA;
+
+	PUTBACK;
+
+	GPERL_CLOSURE_MARSHAL_CALL (G_SCALAR);
+
+	SPAGAIN;
+
+	if (count != 1)
+		croak ("signal handlers for `new_window' are supposed to "
+		       "return the new GtkMozEmbed object");
+
+	embed = (GtkMozEmbed **) g_value_get_pointer (param_values + 1);
+	*embed = SvGtkMozEmbed (POPs);
+
+	PUTBACK;
+	FREETMPS;
+	LEAVE;
+}
+
+/* ------------------------------------------------------------------------- */
+
 MODULE = Gtk2::MozEmbed	PACKAGE = Gtk2::MozEmbed	PREFIX = gtk_moz_embed_
 
 BOOT:
 #include "register.xsh"
 #include "boot.xsh"
+	gperl_signal_set_marshaller_for (GTK_TYPE_MOZ_EMBED,
+	                                 "new_window",
+	                                 gtk2perl_moz_embed_new_window_marshal);
+	/* gperl_signal_set_marshaller_for (GTK_TYPE_MOZ_EMBED_SINGLE,
+	                                 "new_window_orphan",
+	                                 gtk2perl_moz_embed_new_window_marshal); */
 
 =for object Gtk2::MozEmbed::main
 
 =cut
 
-void
-DESTROY (embed)
-	GtkWidget *embed
-    CODE:
-	if (embed)
-		gtk_widget_unref (embed);
+=for apidoc
 
+This function returns a new Gtk Mozilla embedding widget. On failure it will
+return I<undef>.
+
+=cut
 ##  GtkWidget * gtk_moz_embed_new (void)
 GtkWidget_ornull *
 gtk_moz_embed_new (class)
     C_ARGS:
 	/* void */
     CLEANUP:
+#if !GTK_MOZ_EMBED_CHECK_VERSION (1, 7, 3)
+	/* To avoid getting a segfault, add an additional ref so that the thing
+	   will never get destroyed. */
 	if (RETVAL)
 		gtk_widget_ref (RETVAL);
+#endif
 
 # What do these do?  Do you need them?
 # ##  void gtk_moz_embed_push_startup (void)
@@ -120,6 +177,12 @@ gtk_moz_embed_new (class)
 #     C_ARGS:
 # 	/* void */
 
+=for apidoc
+
+This function must be called before the first widget is created or XPCOM is
+initialized. It allows you to set the path to the mozilla components.
+
+=cut
 ##  void gtk_moz_embed_set_comp_path (char *aPath)
 void
 gtk_moz_embed_set_comp_path (class, aPath)
@@ -135,37 +198,81 @@ gtk_moz_embed_set_profile_path (class, aDir, aName)
     C_ARGS:
 	aDir, aName
 
+=for apidoc
+
+This function starts loading a url in the embedding widget. All loads are
+asynchronous. The url argument should be in the form of http://www.gnome.org.
+
+=cut
 ##  void gtk_moz_embed_load_url (GtkMozEmbed *embed, const char *url)
 void
 gtk_moz_embed_load_url (embed, url)
 	GtkMozEmbed *embed
 	const char *url
 
+=for apidoc
+
+This function will allow you to stop the load of a document that is being
+loaded in the widget.
+
+=cut
 ##  void gtk_moz_embed_stop_load (GtkMozEmbed *embed)
 void
 gtk_moz_embed_stop_load (embed)
 	GtkMozEmbed *embed
 
+=for apidoc
+
+This function will return whether or not you can go backwards in the document's
+navigation history. It will return I<TRUE> if it can go backwards, I<FALSE> if
+it can't.
+
+=cut
 ##  gboolean gtk_moz_embed_can_go_back (GtkMozEmbed *embed)
 gboolean
 gtk_moz_embed_can_go_back (embed)
 	GtkMozEmbed *embed
 
+=for apidoc
+
+This function will return whether or not you can go forwards in the document's
+navigation history. It will return I<TRUE> if it can go forwards, I<FALSE> if
+it can't.
+
+=cut
 ##  gboolean gtk_moz_embed_can_go_forward (GtkMozEmbed *embed)
 gboolean
 gtk_moz_embed_can_go_forward (embed)
 	GtkMozEmbed *embed
 
+=for apidoc
+
+This function will go backwards one step in the document's navigation history.
+
+=cut
 ##  void gtk_moz_embed_go_back (GtkMozEmbed *embed)
 void
 gtk_moz_embed_go_back (embed)
 	GtkMozEmbed *embed
 
+=for apidoc
+
+This function will go forward one step in the document's navigation history.
+
+=cut
 ##  void gtk_moz_embed_go_forward (GtkMozEmbed *embed)
 void
 gtk_moz_embed_go_forward (embed)
 	GtkMozEmbed *embed
 
+=for apidoc
+
+This function will allow you to take a chunk of random data and render it into
+the document. You need to pass in the data and the length of the data. The
+C<$base_uri> is used to resolve internal references in the document and the
+C<$mime_type> is used to determine how to render the document internally.
+
+=cut
 ##  void gtk_moz_embed_render_data (GtkMozEmbed *embed, const char *data, guint32 len, const char *base_uri, const char *mime_type)
 void
 gtk_moz_embed_render_data (embed, data, base_uri, mime_type)
@@ -180,6 +287,13 @@ gtk_moz_embed_render_data (embed, data, base_uri, mime_type)
 	real_data = SvPV (data, len);
 	gtk_moz_embed_render_data (embed, real_data, len, base_uri, mime_type);
 
+=for apidoc
+
+This function is used to start loading a document from an external source into
+the embedding widget. You need to pass in the C<$base_uri> for resolving
+internal links and and the C<$mime_type> of the document.
+
+=cut
 ##  void gtk_moz_embed_open_stream (GtkMozEmbed *embed, const char *base_uri, const char *mime_type)
 void
 gtk_moz_embed_open_stream (embed, base_uri, mime_type)
@@ -187,6 +301,13 @@ gtk_moz_embed_open_stream (embed, base_uri, mime_type)
 	const char *base_uri
 	const char *mime_type
 
+=for apidoc
+
+This function allows you to append data to an already opened stream in the
+widget. You need to pass in the data that you want to append to the document
+and its length.
+
+=cut
 ##  void gtk_moz_embed_append_data (GtkMozEmbed *embed, const char *data, guint32 len)
 void
 gtk_moz_embed_append_data (embed, data)
@@ -199,44 +320,191 @@ gtk_moz_embed_append_data (embed, data)
 	real_data = SvPV (data, len);
 	gtk_moz_embed_append_data (embed, real_data, len);
 
+=for apidoc
+
+This function closes the stream that you have been using to append data
+manually to the embedding widget.
+
+=cut
 ##  void gtk_moz_embed_close_stream (GtkMozEmbed *embed)
 void
 gtk_moz_embed_close_stream (embed)
 	GtkMozEmbed *embed
 
+=for apidoc
+
+This function returns the current link message of the document if there is one.
+
+=cut
 ##  char * gtk_moz_embed_get_link_message (GtkMozEmbed *embed)
 char_own *
 gtk_moz_embed_get_link_message (embed)
 	GtkMozEmbed *embed
 
+=for apidoc
+
+This function returns the js_status message if there is one.
+
+=cut
 ##  char * gtk_moz_embed_get_js_status (GtkMozEmbed *embed)
 char_own *
 gtk_moz_embed_get_js_status (embed)
 	GtkMozEmbed *embed
 
+=for apidoc
+
+This function will get the current title for a document.
+
+=cut
 ##  char * gtk_moz_embed_get_title (GtkMozEmbed *embed)
 char_own *
 gtk_moz_embed_get_title (embed)
 	GtkMozEmbed *embed
 
+=for apidoc
+
+This function will return the current location of the document.
+
+=cut
 ##  char * gtk_moz_embed_get_location (GtkMozEmbed *embed)
 char_own *
 gtk_moz_embed_get_location (embed)
 	GtkMozEmbed *embed
 
+=for apidoc
+
+This function reloads the document. The flags argument can be used to control
+the behaviour of the reload.
+
+=cut
 ##  void gtk_moz_embed_reload (GtkMozEmbed *embed, gint32 flags)
 void
 gtk_moz_embed_reload (embed, flags)
 	GtkMozEmbed *embed
 	GtkMozEmbedReloadFlags flags
 
+=for apidoc
+
+This function is used to set the chome mask for this window.
+
+=cut
 ##  void gtk_moz_embed_set_chrome_mask (GtkMozEmbed *embed, guint32 flags)
 void
 gtk_moz_embed_set_chrome_mask (embed, flags)
 	GtkMozEmbed *embed
 	GtkMozEmbedChromeFlags flags
 
+=for apidoc
+
+This function gets the current chome mask for this window. Please see the
+documentation for L<Gtk2::MozEmbed::set_chrome_mask> for the value of the
+return mask.
+
+=cut
 ##  guint32 gtk_moz_embed_get_chrome_mask (GtkMozEmbed *embed)
 GtkMozEmbedChromeFlags
 gtk_moz_embed_get_chrome_mask (embed)
 	GtkMozEmbed *embed
+
+# --------------------------------------------------------------------------- #
+
+=for object Gtk2::MozEmbed::main
+
+=head1 SIGNALS
+
+=over
+
+=item B<link_message> (Gtk2::MozEmbed)
+
+This signal is emitted when the link message changes. This happens when the
+user moves the mouse over a link in a web page. Please use
+L<Gtk2::MozEmbed::get_link_message> to get the actual value of the link
+message.
+
+=item B<js_status> (Gtk2::MozEmbed)
+
+This signal is emitted when the JavaScript status message changes. Please use
+L<Gtk2::MozEmbed::get_js_status> to get the actual value of the js status
+message.
+
+=item B<location> (Gtk2::MozEmbed)
+
+This signal is emitted any time that the location of the document has
+changed. Please use L<Gtk2::MozEmbed::get_location> to get the actual value of
+the location.
+
+=item B<title> (Gtk2::MozEmbed)
+
+This signal is emitted any time that the title of a document has
+changed. Please use the L<Gtk2::MozEmbed::get_title> call to get the actual
+value of the title.
+
+=item B<progress> (Gtk2::MozEmbed, integer (cur), integer (max))
+
+This signal is emitted any time that there is a change in the progress of
+loading a document.
+
+The cur value indicates how much of the document has been downloaded.
+
+The max value indicates the length of the document. If the value of max is less
+than one the full length of the document can not be determined.
+
+=item B<net_state> (Gtk2::MozEmbed, integer (flags), unsigned integer (status))
+
+This signal is emitted when there's a change in the state of the loading of a
+document.
+
+=item B<net_start> (Gtk2::MozEmbed)
+
+This signal is emitted any time that the load of a document has been started.
+
+=item B<net_stop> (Gtk2::MozEmbed)
+
+This signal is emitted any time that the loading of a document has completed.
+
+=item Gtk2::MozEmbed B<new_window> (Gtk2::MozEmbed, Gtk2::MozEmbed::Chrome)
+
+This signal is emitted any time that a new toplevel window is requested by the
+document. This will happen in the case of a window.open() in
+JavaScript. Responding to this signal allows you to surround a new toplevel
+window with your chrome.
+
+You should return the newly created GtkMozEmbed object.
+
+=item B<visibility> (Gtk2::MozEmbed, boolean)
+
+This signal is emitted when the toplevel window in question needs to be shown
+or hidden. If the visibility argument is I<TRUE> then the window should be
+shown. If it's I<FALSE> it should be hidden.
+
+=item B<destroy_browser> (Gtk2::MozEmbed)
+
+This signal is emitted when the document as requested that the toplevel window
+be closed. This will happen in the case of a JavaScript window.close().
+
+=item boolean B<open_uri> (Gtk2::MozEmbed, string)
+
+This signal is emitted when the document tries to load a new document, for
+example when someone clicks on a link in a web page. This signal gives the
+embedder the opportunity to keep the new document from being loaded. The uri
+argument is the uri that's going to be loaded.
+
+If you return I<TRUE> from this signal, the new document will NOT be loaded. If
+you return I<FALSE> the new document will be loaded. This is somewhat
+non-intuitive. Think of it as the Mozilla engine is asking if you want to
+interrupt the loading of a new document. By returning I<TRUE> you are saying
+"don't load this document."
+
+=back
+
+=cut
+
+# --------------------------------------------------------------------------- #
+
+# MODULE = Gtk2::MozEmbed	PACKAGE = Gtk2::MozEmbedSingle	PREFIX = gtk_moz_embed_single_
+
+# ##  GtkMozEmbedSingle * gtk_moz_embed_single_get (void)
+# GtkMozEmbedSingle *
+# gtk_moz_embed_single_get (class)
+#     C_ARGS:
+# 	/* void */

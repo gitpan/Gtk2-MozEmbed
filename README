@@ -12,7 +12,7 @@ can be accessed with:
 				 Installation
 				--------------
 
-To install Gnome2::Vte, run the following commands:
+To install Gtk2::MozEmbed, run the following commands:
 
   perl Makefile.PL
   make
@@ -22,9 +22,10 @@ To install Gnome2::Vte, run the following commands:
 				 Dependencies
 				--------------
 
-Gnome2::Vte depends on:
+Gtk2::MozEmbed depends on:
 
   ExtUtils::Depends
   ExtUtils::PkgConfig
-  Gtk2 >= 1.00
+  Glib >= 1.060
+  Gtk2 >= 1.000
   mozilla-gtkmozembed >= 1.7

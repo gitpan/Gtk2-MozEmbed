@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Header$
+# $Header: /cvsroot/gtk2-perl/gtk2-perl-xs/Gtk2-MozEmbed/t/GtkMozEmbed.t,v 1.3 2005/02/27 22:02:41 kaffeetisch Exp $
 
 use strict;
 use warnings;
@@ -18,10 +18,6 @@ isa_ok($moz, "Gtk2::MozEmbed");
 
 my $uri = "file://" . $ENV{ HOME };
 
-# my $window = Gtk2::Window -> new();
-# $window -> add($moz);
-# $window -> realize();
-
 $moz -> load_url($uri);
 $moz -> stop_load();
 
@@ -31,10 +27,16 @@ ok(not $moz -> can_go_forward());
 $moz -> go_back();
 $moz -> go_forward();
 
+# my $window = Gtk2::Window -> new();
+# $window -> add($moz);
+# $window -> realize();
+# $moz -> show_all();
+# $window -> show_all();
+
 # segfault: $moz -> render_data("<html></html>", $uri, "text/html");
-# assertion: $moz -> open_stream($uri, "text/html");
-#            $moz -> close_stream();
-#            $moz -> append_data("<!-- bla -->");
+#           $moz -> open_stream($uri, "text/html");
+#           $moz -> append_data("<!-- bla -->");
+#           $moz -> close_stream();
 
 is($moz -> get_link_message(), undef);
 is($moz -> get_js_status(), undef);
@@ -44,4 +46,10 @@ is($moz -> get_location(), $uri);
 $moz -> reload([qw/reloadnormal reloadbypassproxyandcache/]);
 
 $moz -> set_chrome_mask([qw/defaultchrome modal/]);
-is_deeply($moz -> get_chrome_mask(), [qw/defaultchrome modal/]);
+TODO: {
+  local $TODO = "Test::More seems to be broken";
+  is_deeply($moz -> get_chrome_mask(), [qw/defaultchrome modal/]);
+}
+
+# my $single = Gtk2::MozEmbedSingle -> new();
+# isa_ok($single, "Gtk2::MozEmbedSingle");

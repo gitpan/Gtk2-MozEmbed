@@ -15,11 +15,10 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * $Header: /cvsroot/gtk2-perl/gtk2-perl-xs/Gtk2-MozEmbed/xs/GtkMozEmbed.xs,v 1.1 2004/08/16 00:13:45 kaffeetisch Exp $
+ * $Header$
  */
 
 #include "gtkmozembed2perl.h"
-#include "gperl_marshal.h"
 
 /* ------------------------------------------------------------------------- */
 
@@ -82,64 +81,22 @@ gtk2perl_moz_embed_chrome_flags_get_type(void)
 
 /* ------------------------------------------------------------------------- */
 
-static void
-gtk2perl_moz_embed_new_window_marshal (GClosure *closure,
-                                       GValue *return_value,
-                                       guint n_param_values,
-                                       const GValue *param_values,
-                                       gpointer invocation_hint,
-                                       gpointer marshal_data)
-{
-	dGPERL_CLOSURE_MARSHAL_ARGS;
-	GtkMozEmbed **embed;
-
-	GPERL_CLOSURE_MARSHAL_INIT (closure, marshal_data);
-
-	ENTER;
-	SAVETMPS;
-
-	PUSHMARK (SP);
-
-	GPERL_CLOSURE_MARSHAL_PUSH_INSTANCE (param_values);
-
-	/* param_values + 1 is the pointer we're supposed to fill.
-	 * param_values + 2 is the chrome mask. */
-	XPUSHs (sv_2mortal (newSVGtkMozEmbedChromeFlags
-	                     (g_value_get_uint (param_values + 2))));
-
-	GPERL_CLOSURE_MARSHAL_PUSH_DATA;
-
-	PUTBACK;
-
-	GPERL_CLOSURE_MARSHAL_CALL (G_SCALAR);
-
-	SPAGAIN;
-
-	if (count != 1)
-		croak ("signal handlers for `new_window' are supposed to "
-		       "return the new GtkMozEmbed object");
-
-	embed = (GtkMozEmbed **) g_value_get_pointer (param_values + 1);
-	*embed = SvGtkMozEmbed (POPs);
-
-	PUTBACK;
-	FREETMPS;
-	LEAVE;
-}
-
-/* ------------------------------------------------------------------------- */
-
 MODULE = Gtk2::MozEmbed	PACKAGE = Gtk2::MozEmbed	PREFIX = gtk_moz_embed_
 
 BOOT:
 #include "register.xsh"
 #include "boot.xsh"
-	gperl_signal_set_marshaller_for (GTK_TYPE_MOZ_EMBED, "new_window",
-	                                 gtk2perl_moz_embed_new_window_marshal);
 
 =for object Gtk2::MozEmbed::main
 
 =cut
+
+void
+DESTROY (embed)
+	GtkWidget *embed
+    CODE:
+	if (embed)
+		gtk_widget_unref (embed);
 
 ##  GtkWidget * gtk_moz_embed_new (void)
 GtkWidget_ornull *
@@ -147,8 +104,6 @@ gtk_moz_embed_new (class)
     C_ARGS:
 	/* void */
     CLEANUP:
-	/* To avoid getting a segfault, add an additional ref so that the thing
-	   will never get destroyed. */
 	if (RETVAL)
 		gtk_widget_ref (RETVAL);
 

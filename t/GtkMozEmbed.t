@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Header: /cvsroot/gtk2-perl/gtk2-perl-xs/Gtk2-MozEmbed/t/GtkMozEmbed.t,v 1.1 2004/08/16 00:13:45 kaffeetisch Exp $
+# $Header$
 
 use strict;
 use warnings;
@@ -17,6 +17,10 @@ my $moz = Gtk2::MozEmbed -> new();
 isa_ok($moz, "Gtk2::MozEmbed");
 
 my $uri = "file://" . $ENV{ HOME };
+
+# my $window = Gtk2::Window -> new();
+# $window -> add($moz);
+# $window -> realize();
 
 $moz -> load_url($uri);
 $moz -> stop_load();

@@ -26,6 +26,5 @@ Gnome2::Vte depends on:
 
   ExtUtils::Depends
   ExtUtils::PkgConfig
-  Glib >= 1.053 # FIXME: 1.06
-  Gtk2 >= 1.000
+  Gtk2 >= 1.00
   mozilla-gtkmozembed >= 1.7

@@ -15,15 +15,29 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * $Header: /cvsroot/gtk2-perl/gtk2-perl-xs/Gtk2-MozEmbed/gtkmozembed2perl.h,v 1.2 2004/08/27 21:02:13 kaffeetisch Exp $
+ * $Header: /cvsroot/gtk2-perl/gtk2-perl-xs/Gtk2-MozEmbed/gtkmozembed2perl.h,v 1.4 2005/04/11 22:30:19 kaffeetisch Exp $
  */
 
 #ifndef _GTKMOZEMBED2PERL_H_
 #define _GTKMOZEMBED2PERL_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <gtk2perl.h>
 
+#ifdef __cplusplus
+}
+#endif
+
 #include <gtkmozembed.h>
+
+#ifdef __cplusplus /* implies Mozilla::DOM is installed */
+#include <gtkmozembed_internal.h>
+#include <mozilladom2perl.h>
+#endif
+
 #include "gtkmozembed2perl-version.h"
 
 #if 1 /* FIXME: !GTK_MOZ_EMBED_CHECK_VERSION (x, y, z) */

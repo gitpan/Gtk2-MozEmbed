@@ -1,18 +1,19 @@
 package Gtk2::MozEmbed;
 
-# $Header: /cvsroot/gtk2-perl/gtk2-perl-xs/Gtk2-MozEmbed/MozEmbed.pm,v 1.5 2005/02/27 22:03:49 kaffeetisch Exp $
+# $Header: /cvsroot/gtk2-perl/gtk2-perl-xs/Gtk2-MozEmbed/MozEmbed.pm,v 1.7 2005/04/11 22:36:24 kaffeetisch Exp $
 
 use 5.008;
 use strict;
 use warnings;
 
 use Gtk2;
+eval "use Mozilla::DOM; 1;";
 
 require DynaLoader;
 
 our @ISA = qw(DynaLoader);
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 sub import {
   my $self = shift();
@@ -69,12 +70,18 @@ This module allows a Perl developer to use the Mozilla embedding widget.
 
 L<Gtk2::MozEmbed::index>(3pm), L<Gtk2>(3pm), L<Gtk2::api>(3pm).
 
-=head1 AUTHOR
+=head1 AUTHORS
 
-Torsten Schoenfeld E<lt>kaffeetisch@web.deE<gt>
+=over
+
+=item Torsten Schoenfeld E<lt>kaffeetisch at gmx dot deE<gt>
+
+=item Scott Lanning E<lt>lannings at who dot intE<gt>
+
+=back
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2004 by the gtk2-perl team
+Copyright (C) 2004-2005 by the gtk2-perl team
 
 =cut

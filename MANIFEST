@@ -9,6 +9,7 @@ NEWS
 README
 copyright.pod
 examples/pumzilla
+gtkmozembed.typemap
 gtkmozembed2perl.h
 maps
 t/GtkMozEmbed.t

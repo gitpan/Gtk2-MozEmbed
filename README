@@ -27,5 +27,8 @@ Gtk2::MozEmbed depends on:
   ExtUtils::Depends
   ExtUtils::PkgConfig
   Glib >= 1.060
-  Gtk2 >= 1.000
-  mozilla-gtkmozembed >= 1.7
+  Gtk2 >= 1.081
+  mozilla-gtkmozembed >= 1.7 or firefox-gtkmozembed >= 1.0
+
+If you have Mozilla::DOM >= 0.01 installed, optional support for it will be
+enabled.

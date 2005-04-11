@@ -7,14 +7,16 @@ use Config;
 use Cwd;
 use File::Spec;
 
-# $Header: /cvsroot/gtk2-perl/gtk2-perl-xs/Gtk2-MozEmbed/Makefile.PL,v 1.5 2005/02/27 22:03:49 kaffeetisch Exp $
+# $Header: /cvsroot/gtk2-perl/gtk2-perl-xs/Gtk2-MozEmbed/Makefile.PL,v 1.7 2005/04/11 22:30:19 kaffeetisch Exp $
 
 our %build_reqs = (
   'perl-ExtUtils-Depends'   => '0.20',
   'perl-ExtUtils-PkgConfig' => '1.03',
   'perl-Glib'               => '1.06',
-  'perl-Gtk2'               => '1.00',
-  'GtkMozEmbed'             => '1.7',
+  'perl-Gtk2'               => '1.081',
+  'perl-Mozilla-DOM'        => '0.01',
+  'Mozilla'                 => '1.7',
+  'Firefox'                 => '1.0',
 );
 
 unless (eval "use ExtUtils::Depends '$build_reqs{'perl-ExtUtils-Depends'}';"
@@ -36,7 +38,15 @@ unless (eval "use ExtUtils::Depends '$build_reqs{'perl-ExtUtils-Depends'}';"
   exit 1; # not reached
 }
 
-my %pkgcfg = ExtUtils::PkgConfig->find("mozilla-gtkmozembed >= $build_reqs{'GtkMozEmbed'}");
+# Check if Mozilla::DOM is installed. (could use an ENABLE_DOM option)
+my $use_dom = 1;
+unless (eval "use Mozilla::DOM '$build_reqs{'perl-Mozilla-DOM'}'; 1") {
+  warn "Mozilla::DOM >= $build_reqs{'perl-Mozilla-DOM'} not found.\n";
+  $use_dom = 0;
+}
+
+my %pkgcfg = ExtUtils::PkgConfig->find("mozilla-gtkmozembed >= $build_reqs{'Mozilla'}",
+                                       "firefox-gtkmozembed >= $build_reqs{'Firefox'}");
 
 mkdir 'build', 0777;
 
@@ -49,19 +59,27 @@ our %pod_files = (
 Gtk2::CodeGen->parse_maps('gtkmozembed2perl');
 Gtk2::CodeGen->write_boot(ignore => qr/^Gtk2::MozEmbed$/);
 
+my $pkg = $pkgcfg{pkg} =~ /mozilla/ ? "mozilla-gtkmozembed" :
+                                      "firefox-gtkmozembed";
+
 ExtUtils::PkgConfig->write_version_macros (
   "build/gtkmozembed2perl-version.h",
-  "mozilla-gtkmozembed" => "GTK_MOZ_EMBED",
+  $pkg => "GTK_MOZ_EMBED",
 );
 
-my $mozembed = ExtUtils::Depends->new('Gtk2::MozEmbed', 'Gtk2');
+my $mozembed = ExtUtils::Depends->new('Gtk2::MozEmbed', 'Gtk2',
+                                      ($use_dom ? ('Mozilla::DOM') : ()));
+
 $mozembed->set_inc($pkgcfg{cflags});
 $mozembed->set_libs($pkgcfg{libs});
 $mozembed->add_xs(@xs_files);
 $mozembed->add_pm('MozEmbed.pm' => '$(INST_LIBDIR)/MozEmbed.pm');
-$mozembed->add_typemaps(map {File::Spec->catfile(cwd(), $_)} 'build/gtkmozembed2perl.typemap');
+$mozembed->add_typemaps(map { File::Spec->catfile(cwd(), $_) }
+                          qw(gtkmozembed.typemap
+                             build/gtkmozembed2perl.typemap));
 
-$mozembed->install(qw(gtkmozembed2perl.h build/gtkmozembed2perl-autogen.h));
+$mozembed->install(qw(gtkmozembed2perl.h
+                      build/gtkmozembed2perl-autogen.h));
 $mozembed->save_config('build/IFiles.pm');
 
 my $libdir = `pkg-config --variable=libdir mozilla-gtkmozembed`;
@@ -74,6 +92,7 @@ WriteMakefile(
   XSPROTOARG    => '-noprototypes',
   MAN3PODS      => \%pod_files,
   LD            => "LD_RUN_PATH=$libdir $Config{ld}",
+  ($use_dom ? (CC => 'c++', XSOPT => '-C++') : ()),
   $mozembed->get_makefile_vars,
 );
 

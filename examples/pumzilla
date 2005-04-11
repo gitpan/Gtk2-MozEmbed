@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Header: /cvsroot/gtk2-perl/gtk2-perl-xs/Gtk2-MozEmbed/examples/pumzilla,v 1.2 2004/08/27 21:02:51 kaffeetisch Exp $
+# $Header: /cvsroot/gtk2-perl/gtk2-perl-xs/Gtk2-MozEmbed/examples/pumzilla,v 1.4 2005/04/11 22:30:40 kaffeetisch Exp $
 
 package PumZilla;
 

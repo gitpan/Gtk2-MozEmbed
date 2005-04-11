@@ -1,3 +1,11 @@
+Overview of changes in Gtk2-MozEmbed 0.04
+=========================================
+
+* Add optional support for Scott Lanning's shiny new Mozilla::DOM module:
+  - Use a C++ compiler;
+  - Provide signal marshallers for the dom_key_* and dom_mouse_* signals;
+  - Wrap gtk_moz_embed_get_nsIWebBrowser.
+
 Overview of changes in Gtk2-MozEmbed 0.03
 =========================================
 

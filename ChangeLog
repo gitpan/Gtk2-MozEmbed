@@ -1,3 +1,13 @@
+2005/10/10	kaffeetisch
+
+	* MozEmbed.pm, NEWS: Version 0.05.
+
+2005/09/28	kaffeetisch
+
+	* Makefile.PL: Apply patches from Scott Lanning and José (RT
+	Ticker 14792) to make the pkg-config interaction more robust and
+	correct.
+
 2005/04/12	kaffeetisch
 
 	* MozEmbed.pm, NEWS, README: Version 0.04.

@@ -7,7 +7,7 @@ use Config;
 use Cwd;
 use File::Spec;
 
-# $Header: /cvsroot/gtk2-perl/gtk2-perl-xs/Gtk2-MozEmbed/Makefile.PL,v 1.7 2005/04/11 22:30:19 kaffeetisch Exp $
+# $Header: /cvsroot/gtk2-perl/gtk2-perl-xs/Gtk2-MozEmbed/Makefile.PL,v 1.8 2005/09/28 13:28:37 kaffeetisch Exp $
 
 our %build_reqs = (
   'perl-ExtUtils-Depends'   => '0.20',
@@ -46,7 +46,8 @@ unless (eval "use Mozilla::DOM '$build_reqs{'perl-Mozilla-DOM'}'; 1") {
 }
 
 my %pkgcfg = ExtUtils::PkgConfig->find("mozilla-gtkmozembed >= $build_reqs{'Mozilla'}",
-                                       "firefox-gtkmozembed >= $build_reqs{'Firefox'}");
+                                       "firefox-gtkmozembed >= $build_reqs{'Firefox'}",
+                                       "mozilla-firefox-gtkmozembed >= $build_reqs{'Firefox'}");
 
 mkdir 'build', 0777;
 
@@ -59,8 +60,7 @@ our %pod_files = (
 Gtk2::CodeGen->parse_maps('gtkmozembed2perl');
 Gtk2::CodeGen->write_boot(ignore => qr/^Gtk2::MozEmbed$/);
 
-my $pkg = $pkgcfg{pkg} =~ /mozilla/ ? "mozilla-gtkmozembed" :
-                                      "firefox-gtkmozembed";
+my ($pkg) = $pkgcfg{pkg} =~ /^(\S+-gtkmozembed)\s/;
 
 ExtUtils::PkgConfig->write_version_macros (
   "build/gtkmozembed2perl-version.h",
@@ -82,7 +82,7 @@ $mozembed->install(qw(gtkmozembed2perl.h
                       build/gtkmozembed2perl-autogen.h));
 $mozembed->save_config('build/IFiles.pm');
 
-my $libdir = `pkg-config --variable=libdir mozilla-gtkmozembed`;
+my $libdir = `pkg-config --variable=libdir $pkg`;
 chomp($libdir);
 
 WriteMakefile(

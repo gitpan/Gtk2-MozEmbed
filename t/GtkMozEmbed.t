@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Header: /cvsroot/gtk2-perl/gtk2-perl-xs/Gtk2-MozEmbed/t/GtkMozEmbed.t,v 1.3 2005/02/27 22:02:41 kaffeetisch Exp $
+# $Header: /cvsroot/gtk2-perl/gtk2-perl-xs/Gtk2-MozEmbed/t/GtkMozEmbed.t,v 1.4 2005/12/20 20:34:40 kaffeetisch Exp $
 
 use strict;
 use warnings;
@@ -9,6 +9,9 @@ use Gtk2 -init;
 use Gtk2::MozEmbed;
 
 use Test::More tests => 8;
+
+Gtk2::MozEmbed -> push_startup();
+Gtk2::MozEmbed -> pop_startup();
 
 Gtk2::MozEmbed -> set_comp_path($ENV{ HOME });
 Gtk2::MozEmbed -> set_profile_path($ENV{ HOME } . "/.Schmuh", "Schmuh");

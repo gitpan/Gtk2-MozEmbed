@@ -7,7 +7,7 @@ use Config;
 use Cwd;
 use File::Spec;
 
-# $Header: /cvsroot/gtk2-perl/gtk2-perl-xs/Gtk2-MozEmbed/Makefile.PL,v 1.8 2005/09/28 13:28:37 kaffeetisch Exp $
+# $Header: /cvsroot/gtk2-perl/gtk2-perl-xs/Gtk2-MozEmbed/Makefile.PL,v 1.10 2006/03/07 17:54:00 kaffeetisch Exp $
 
 our %build_reqs = (
   'perl-ExtUtils-Depends'   => '0.20',
@@ -17,6 +17,13 @@ our %build_reqs = (
   'perl-Mozilla-DOM'        => '0.01',
   'Mozilla'                 => '1.7',
   'Firefox'                 => '1.0',
+  'XULRunner'               => '1.8',
+);
+
+our %pre_reqs = (
+  'Gtk2'                => $build_reqs{'perl-Gtk2'},
+  'ExtUtils::Depends'   => $build_reqs{'perl-ExtUtils-Depends'},
+  'ExtUtils::PkgConfig' => $build_reqs{'perl-ExtUtils-PkgConfig'},
 );
 
 unless (eval "use ExtUtils::Depends '$build_reqs{'perl-ExtUtils-Depends'}';"
@@ -29,11 +36,7 @@ unless (eval "use ExtUtils::Depends '$build_reqs{'perl-ExtUtils-Depends'}';"
   warn "$@\n";
   WriteMakefile(
     PREREQ_FATAL => 1,
-    PREREQ_PM    => {
-      'Gtk2'                => $build_reqs{'perl-Gtk2'},
-      'ExtUtils::Depends'   => $build_reqs{'perl-ExtUtils-Depends'},
-      'ExtUtils::PkgConfig' => $build_reqs{'perl-ExtUtils-PkgConfig'},
-    },
+    PREREQ_PM    => \%pre_reqs,
   );
   exit 1; # not reached
 }
@@ -47,7 +50,8 @@ unless (eval "use Mozilla::DOM '$build_reqs{'perl-Mozilla-DOM'}'; 1") {
 
 my %pkgcfg = ExtUtils::PkgConfig->find("mozilla-gtkmozembed >= $build_reqs{'Mozilla'}",
                                        "firefox-gtkmozembed >= $build_reqs{'Firefox'}",
-                                       "mozilla-firefox-gtkmozembed >= $build_reqs{'Firefox'}");
+                                       "mozilla-firefox-gtkmozembed >= $build_reqs{'Firefox'}",
+                                       "xulrunner-gtkmozembed >= $build_reqs{'XULRunner'}");
 
 mkdir 'build', 0777;
 
@@ -89,6 +93,7 @@ WriteMakefile(
   NAME          => 'Gtk2::MozEmbed',
   VERSION_FROM  => 'MozEmbed.pm',
   ABSTRACT_FROM => 'MozEmbed.pm',
+  PREREQ_PM     => \%pre_reqs,
   XSPROTOARG    => '-noprototypes',
   MAN3PODS      => \%pod_files,
   LD            => "LD_RUN_PATH=$libdir $Config{ld}",

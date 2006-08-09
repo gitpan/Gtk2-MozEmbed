@@ -1,3 +1,20 @@
+2006-08-09	kaffeetisch
+
+	* MozEmbed.pm, NEWS, README, copyright.pod: Version 0.06.
+
+2006/03/07	kaffeetisch
+
+	* Makefile.PL: Patch from Tom Killian adds support for compiling
+	against XULRunner.
+
+2005/12/20	kaffeetisch
+
+	* Makefile.PL: Make our dependencies known so MakeMaker generates
+	a correct META.yml.
+
+	* t/GtkMozEmbed.t, xs/GtkMozEmbed.xs: Bind and test
+	gtk_moz_embed_push_startup and gtk_moz_embed_pop_startup.
+
 2005/10/10	kaffeetisch
 
 	* MozEmbed.pm, NEWS: Version 0.05.

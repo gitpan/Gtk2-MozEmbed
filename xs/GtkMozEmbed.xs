@@ -15,7 +15,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * $Header: /cvsroot/gtk2-perl/gtk2-perl-xs/Gtk2-MozEmbed/xs/GtkMozEmbed.xs,v 1.5 2005/04/11 22:30:40 kaffeetisch Exp $
+ * $Header: /cvsroot/gtk2-perl/gtk2-perl-xs/Gtk2-MozEmbed/xs/GtkMozEmbed.xs,v 1.6 2005/12/20 20:34:40 kaffeetisch Exp $
  */
 
 #include "gtkmozembed2perl.h"
@@ -292,18 +292,17 @@ gtk_moz_embed_new (class)
 		gtk_widget_ref (RETVAL);
 #endif
 
-# What do these do?  Do you need them?
-# ##  void gtk_moz_embed_push_startup (void)
-# void
-# gtk_moz_embed_push_startup (class)
-#     C_ARGS:
-# 	/* void */
+##  void gtk_moz_embed_push_startup (void)
+void
+gtk_moz_embed_push_startup (class)
+    C_ARGS:
+	/* void */
 
-# ##  void gtk_moz_embed_pop_startup (void)
-# void
-# gtk_moz_embed_pop_startup (class)
-#     C_ARGS:
-# 	/* void */
+##  void gtk_moz_embed_pop_startup (void)
+void
+gtk_moz_embed_pop_startup (class)
+    C_ARGS:
+	/* void */
 
 =for apidoc
 

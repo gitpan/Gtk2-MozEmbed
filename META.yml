@@ -1,13 +1,20 @@
-# http://module-build.sourceforge.net/META-spec.html
-#XXXXXXX This is a prototype!!!  It will change in the future!!! XXXXX#
-name:         Gtk2-MozEmbed
-version:      0.06
-version_from: MozEmbed.pm
-installdirs:  site
-requires:
+--- #YAML:1.0
+name:                Gtk2-MozEmbed
+version:             0.07
+abstract:            Perl interface to the Mozilla embedding widget
+license:             ~
+author:              ~
+generated_by:        ExtUtils::MakeMaker version 6.44
+distribution_type:   module
+requires:     
     ExtUtils::Depends:             0.20
     ExtUtils::PkgConfig:           1.03
     Gtk2:                          1.081
+meta-spec:
+    url:     http://module-build.sourceforge.net/META-spec-v1.3.html
+    version: 1.3
 
-distribution_type: module
-generated_by: ExtUtils::MakeMaker version 6.30
+configure_requires:
+   ExtUtils::Depends: 0.20
+   Gtk2: 1.081
+   ExtUtils::PkgConfig: 1.03

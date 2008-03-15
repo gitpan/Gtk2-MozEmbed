@@ -1,3 +1,8 @@
+Overview of changes in Gtk2::MozEmbed 0.07
+==========================================
+
+* Prefer xulrunner-gtkmozembed as the GtkMozEmbed provider.
+
 Overview of changes in Gtk2::MozEmbed 0.06
 ==========================================
 

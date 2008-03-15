@@ -1,6 +1,6 @@
 package Gtk2::MozEmbed;
 
-# $Header: /cvsroot/gtk2-perl/gtk2-perl-xs/Gtk2-MozEmbed/MozEmbed.pm,v 1.9 2006/08/09 18:28:37 kaffeetisch Exp $
+# $Header: /cvsroot/gtk2-perl/gtk2-perl-xs/Gtk2-MozEmbed/MozEmbed.pm,v 1.10 2008/03/15 14:36:58 kaffeetisch Exp $
 
 use 5.008;
 use strict;
@@ -13,7 +13,7 @@ require DynaLoader;
 
 our @ISA = qw(DynaLoader);
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 sub import {
   my $self = shift();

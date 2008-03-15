@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Header: /cvsroot/gtk2-perl/gtk2-perl-xs/Gtk2-MozEmbed/t/GtkMozEmbed.t,v 1.4 2005/12/20 20:34:40 kaffeetisch Exp $
+# $Header: /cvsroot/gtk2-perl/gtk2-perl-xs/Gtk2-MozEmbed/t/GtkMozEmbed.t,v 1.5 2007/01/31 19:04:03 kaffeetisch Exp $
 
 use strict;
 use warnings;
@@ -49,10 +49,7 @@ is($moz -> get_location(), $uri);
 $moz -> reload([qw/reloadnormal reloadbypassproxyandcache/]);
 
 $moz -> set_chrome_mask([qw/defaultchrome modal/]);
-TODO: {
-  local $TODO = "Test::More seems to be broken";
-  is_deeply($moz -> get_chrome_mask(), [qw/defaultchrome modal/]);
-}
+ok($moz -> get_chrome_mask() == [qw/defaultchrome modal/]);
 
 # my $single = Gtk2::MozEmbedSingle -> new();
 # isa_ok($single, "Gtk2::MozEmbedSingle");

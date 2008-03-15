@@ -1,18 +1,19 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
 use 5.008;
 use strict;
+use warnings;
 
 use ExtUtils::MakeMaker;
 use Config;
 use Cwd;
 use File::Spec;
 
-# $Header: /cvsroot/gtk2-perl/gtk2-perl-xs/Gtk2-MozEmbed/Makefile.PL,v 1.10 2006/03/07 17:54:00 kaffeetisch Exp $
+# $Header: /cvsroot/gtk2-perl/gtk2-perl-xs/Gtk2-MozEmbed/Makefile.PL,v 1.11 2008/03/15 13:44:56 kaffeetisch Exp $
 
 our %build_reqs = (
   'perl-ExtUtils-Depends'   => '0.20',
   'perl-ExtUtils-PkgConfig' => '1.03',
-  'perl-Glib'               => '1.06',
+  'perl-Glib'               => '1.180',
   'perl-Gtk2'               => '1.081',
   'perl-Mozilla-DOM'        => '0.01',
   'Mozilla'                 => '1.7',
@@ -48,10 +49,10 @@ unless (eval "use Mozilla::DOM '$build_reqs{'perl-Mozilla-DOM'}'; 1") {
   $use_dom = 0;
 }
 
-my %pkgcfg = ExtUtils::PkgConfig->find("mozilla-gtkmozembed >= $build_reqs{'Mozilla'}",
+my %pkgcfg = ExtUtils::PkgConfig->find("xulrunner-gtkmozembed >= $build_reqs{'XULRunner'}",
+                                       "mozilla-gtkmozembed >= $build_reqs{'Mozilla'}",
                                        "firefox-gtkmozembed >= $build_reqs{'Firefox'}",
-                                       "mozilla-firefox-gtkmozembed >= $build_reqs{'Firefox'}",
-                                       "xulrunner-gtkmozembed >= $build_reqs{'XULRunner'}");
+                                       "mozilla-firefox-gtkmozembed >= $build_reqs{'Firefox'}");
 
 mkdir 'build', 0777;
 
@@ -64,7 +65,7 @@ our %pod_files = (
 Gtk2::CodeGen->parse_maps('gtkmozembed2perl');
 Gtk2::CodeGen->write_boot(ignore => qr/^Gtk2::MozEmbed$/);
 
-my ($pkg) = $pkgcfg{pkg} =~ /^(\S+-gtkmozembed)\s/;
+my ($pkg) = $pkgcfg{pkg} =~ /^(\S+)/;
 
 ExtUtils::PkgConfig->write_version_macros (
   "build/gtkmozembed2perl-version.h",
@@ -86,8 +87,8 @@ $mozembed->install(qw(gtkmozembed2perl.h
                       build/gtkmozembed2perl-autogen.h));
 $mozembed->save_config('build/IFiles.pm');
 
-my $libdir = `pkg-config --variable=libdir $pkg`;
-chomp($libdir);
+my $configure_requires =
+  Glib::MakeHelper->get_configure_requires_yaml(%pre_reqs);
 
 WriteMakefile(
   NAME          => 'Gtk2::MozEmbed',
@@ -96,9 +97,14 @@ WriteMakefile(
   PREREQ_PM     => \%pre_reqs,
   XSPROTOARG    => '-noprototypes',
   MAN3PODS      => \%pod_files,
-  LD            => "LD_RUN_PATH=$libdir $Config{ld}",
+
   ($use_dom ? (CC => 'c++', XSOPT => '-C++') : ()),
+
   $mozembed->get_makefile_vars,
+
+  EXTRA_META => qq/
+$configure_requires
+/,
 );
 
 sub MY::postamble {

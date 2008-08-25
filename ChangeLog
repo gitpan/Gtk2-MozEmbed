@@ -1,8 +1,25 @@
+2008-08-25  Torsten Schoenfeld  <kaffeetisch@gmx.de>
+
+	* MozEmbed.pm
+	* NEWS: Version 0.08.
+
+2008-08-25  Torsten Schoenfeld  <kaffeetisch@gmx.de>
+
+	* Makefile.PL
+	* xs/GtkMozEmbed.xs: When compiling against xulrunner, make sure
+	we call gtk_moz_embed_set_path on the appropriate library
+	directory.  This should make us work with xulrunner-1.9.  Patch by
+	Boris Sukholitko.
+
+2008-03-23  Torsten Schoenfeld  <kaffeetisch@gmx.de>
+
+	* Makefile.PL: Say which gtkmozembed provider we compile against.
+
 2008-03-15  Torsten Schoenfeld  <kaffeetisch@gmx.de>
 
 	* copyright.pod
 	* MozEmbed.pm
-	* NEWS: Version 0.06.
+	* NEWS: Version 0.07.
 
 2008-03-15  Torsten Schoenfeld  <kaffeetisch@gmx.de>
 
@@ -38,7 +55,7 @@
 
 2005/09/28	kaffeetisch
 
-	* Makefile.PL: Apply patches from Scott Lanning and José (RT
+	* Makefile.PL: Apply patches from Scott Lanning and JosÃ© (RT
 	Ticker 14792) to make the pkg-config interaction more robust and
 	correct.
 

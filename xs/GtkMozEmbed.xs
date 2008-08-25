@@ -15,7 +15,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * $Header: /cvsroot/gtk2-perl/gtk2-perl-xs/Gtk2-MozEmbed/xs/GtkMozEmbed.xs,v 1.6 2005/12/20 20:34:40 kaffeetisch Exp $
+ * $Header: /cvsroot/gtk2-perl/gtk2-perl-xs/Gtk2-MozEmbed/xs/GtkMozEmbed.xs,v 1.7 2008/08/25 21:27:20 kaffeetisch Exp $
  */
 
 #include "gtkmozembed2perl.h"
@@ -233,6 +233,9 @@ MODULE = Gtk2::MozEmbed	PACKAGE = Gtk2::MozEmbed	PREFIX = gtk_moz_embed_
 BOOT:
 #include "register.xsh"
 #include "boot.xsh"
+#ifdef GTK_MOZ_EMBED_PERL_XULRUNNER_PATH
+	gtk_moz_embed_set_path (GTK_MOZ_EMBED_PERL_XULRUNNER_PATH);
+#endif /* GTK_MOZ_EMBED_PERL_XULRUNNER_PATH */
 	gperl_signal_set_marshaller_for (GTK_TYPE_MOZ_EMBED,
 	                                 "new_window",
 	                                 gtk2perl_moz_embed_new_window_marshal);

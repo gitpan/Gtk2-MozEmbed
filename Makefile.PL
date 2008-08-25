@@ -8,7 +8,7 @@ use Config;
 use Cwd;
 use File::Spec;
 
-# $Header: /cvsroot/gtk2-perl/gtk2-perl-xs/Gtk2-MozEmbed/Makefile.PL,v 1.11 2008/03/15 13:44:56 kaffeetisch Exp $
+# $Header: /cvsroot/gtk2-perl/gtk2-perl-xs/Gtk2-MozEmbed/Makefile.PL,v 1.14 2008/08/25 21:30:23 kaffeetisch Exp $
 
 our %build_reqs = (
   'perl-ExtUtils-Depends'   => '0.20',
@@ -45,14 +45,14 @@ unless (eval "use ExtUtils::Depends '$build_reqs{'perl-ExtUtils-Depends'}';"
 # Check if Mozilla::DOM is installed. (could use an ENABLE_DOM option)
 my $use_dom = 1;
 unless (eval "use Mozilla::DOM '$build_reqs{'perl-Mozilla-DOM'}'; 1") {
-  warn "Mozilla::DOM >= $build_reqs{'perl-Mozilla-DOM'} not found.\n";
   $use_dom = 0;
 }
 
-my %pkgcfg = ExtUtils::PkgConfig->find("xulrunner-gtkmozembed >= $build_reqs{'XULRunner'}",
-                                       "mozilla-gtkmozembed >= $build_reqs{'Mozilla'}",
-                                       "firefox-gtkmozembed >= $build_reqs{'Firefox'}",
-                                       "mozilla-firefox-gtkmozembed >= $build_reqs{'Firefox'}");
+my %pkgcfg = ExtUtils::PkgConfig->find(
+	"xulrunner-gtkmozembed >= $build_reqs{'XULRunner'}",
+	"mozilla-gtkmozembed >= $build_reqs{'Mozilla'}",
+	"firefox-gtkmozembed >= $build_reqs{'Firefox'}",
+	"mozilla-firefox-gtkmozembed >= $build_reqs{'Firefox'}");
 
 mkdir 'build', 0777;
 
@@ -66,17 +66,26 @@ Gtk2::CodeGen->parse_maps('gtkmozembed2perl');
 Gtk2::CodeGen->write_boot(ignore => qr/^Gtk2::MozEmbed$/);
 
 my ($pkg) = $pkgcfg{pkg} =~ /^(\S+)/;
+print "Compiling against $pkg\n";
 
 ExtUtils::PkgConfig->write_version_macros (
   "build/gtkmozembed2perl-version.h",
   $pkg => "GTK_MOZ_EMBED",
 );
 
+my $inc = $pkgcfg{cflags};
+my $libs = $pkgcfg{libs};
+
+if ($libs =~ m#xulrunner-devel-([^/]+)#) {
+	$inc .= qq( -DGTK_MOZ_EMBED_PERL_XULRUNNER_PATH=)
+	      . qq("\\"/usr/lib/xulrunner-$1\\"" );
+}
+
 my $mozembed = ExtUtils::Depends->new('Gtk2::MozEmbed', 'Gtk2',
                                       ($use_dom ? ('Mozilla::DOM') : ()));
 
-$mozembed->set_inc($pkgcfg{cflags});
-$mozembed->set_libs($pkgcfg{libs});
+$mozembed->set_inc($inc);
+$mozembed->set_libs($libs);
 $mozembed->add_xs(@xs_files);
 $mozembed->add_pm('MozEmbed.pm' => '$(INST_LIBDIR)/MozEmbed.pm');
 $mozembed->add_typemaps(map { File::Spec->catfile(cwd(), $_) }

@@ -1,3 +1,8 @@
+Overview of changes in Gtk2::MozEmbed 0.08
+==========================================
+
+* Make building and running against xulrunner-1.9 work.  [Boris Sukholitko]
+
 Overview of changes in Gtk2::MozEmbed 0.07
 ==========================================
 

@@ -1,3 +1,9 @@
+Overview of changes in Gtk2::MozEmbed 0.09
+==========================================
+
+* Make the xulrunner SDK detection work more robust.  [Remi Collet]
+* Fix a test failure.
+
 Overview of changes in Gtk2::MozEmbed 0.08
 ==========================================
 

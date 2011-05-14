@@ -8,7 +8,7 @@ use Config;
 use Cwd;
 use File::Spec;
 
-# $Header: /cvsroot/gtk2-perl/gtk2-perl-xs/Gtk2-MozEmbed/Makefile.PL,v 1.14 2008/08/25 21:30:23 kaffeetisch Exp $
+# $Id$
 
 our %build_reqs = (
   'perl-ExtUtils-Depends'   => '0.20',
@@ -48,17 +48,26 @@ unless (eval "use Mozilla::DOM '$build_reqs{'perl-Mozilla-DOM'}'; 1") {
   $use_dom = 0;
 }
 
-my %pkgcfg = ExtUtils::PkgConfig->find(
-	"xulrunner-gtkmozembed >= $build_reqs{'XULRunner'}",
-	"mozilla-gtkmozembed >= $build_reqs{'Mozilla'}",
-	"firefox-gtkmozembed >= $build_reqs{'Firefox'}",
-	"mozilla-firefox-gtkmozembed >= $build_reqs{'Firefox'}");
+# If the package can't be found, warn and exit with status 0 to indicate to
+# CPAN testers that their system is not supported.
+my %pkgcfg;
+unless (eval {
+          %pkgcfg = ExtUtils::PkgConfig->find(
+            "xulrunner-gtkmozembed >= $build_reqs{'XULRunner'}",
+            "mozilla-gtkmozembed >= $build_reqs{'Mozilla'}",
+            "firefox-gtkmozembed >= $build_reqs{'Firefox'}",
+            "mozilla-firefox-gtkmozembed >= $build_reqs{'Firefox'}");
+          1; })
+{
+	warn $@;
+	exit 0;
+}
 
 mkdir 'build', 0777;
 
 our @xs_files = <xs/*.xs>;
 our %pod_files = (
-	'MozEmbed.pm' => '$(INST_MAN3DIR)/Gtk2::MozEmbed.$(MAN3EXT)',
+	'lib/Gtk2/MozEmbed.pm' => '$(INST_MAN3DIR)/Gtk2::MozEmbed.$(MAN3EXT)',
 	Glib::MakeHelper->do_pod_files (@xs_files),
 );
 
@@ -76,9 +85,9 @@ ExtUtils::PkgConfig->write_version_macros (
 my $inc = $pkgcfg{cflags};
 my $libs = $pkgcfg{libs};
 
-if ($libs =~ m#xulrunner-devel-([^/]+)#) {
+if ($libs =~ m#(lib|lib64)/xulrunner-(devel|sdk)-([^/]+)#) {
 	$inc .= qq( -DGTK_MOZ_EMBED_PERL_XULRUNNER_PATH=)
-	      . qq("\\"/usr/lib/xulrunner-$1\\"" );
+	      . qq("\\"/usr/$1/xulrunner-$3\\"" );
 }
 
 my $mozembed = ExtUtils::Depends->new('Gtk2::MozEmbed', 'Gtk2',
@@ -87,7 +96,7 @@ my $mozembed = ExtUtils::Depends->new('Gtk2::MozEmbed', 'Gtk2',
 $mozembed->set_inc($inc);
 $mozembed->set_libs($libs);
 $mozembed->add_xs(@xs_files);
-$mozembed->add_pm('MozEmbed.pm' => '$(INST_LIBDIR)/MozEmbed.pm');
+$mozembed->add_pm('lib/Gtk2/MozEmbed.pm' => '$(INST_LIBDIR)/MozEmbed.pm');
 $mozembed->add_typemaps(map { File::Spec->catfile(cwd(), $_) }
                           qw(gtkmozembed.typemap
                              build/gtkmozembed2perl.typemap));
@@ -101,8 +110,8 @@ my $configure_requires =
 
 WriteMakefile(
   NAME          => 'Gtk2::MozEmbed',
-  VERSION_FROM  => 'MozEmbed.pm',
-  ABSTRACT_FROM => 'MozEmbed.pm',
+  VERSION_FROM  => 'lib/Gtk2/MozEmbed.pm',
+  ABSTRACT_FROM => 'lib/Gtk2/MozEmbed.pm',
   PREREQ_PM     => \%pre_reqs,
   XSPROTOARG    => '-noprototypes',
   MAN3PODS      => \%pod_files,
@@ -111,9 +120,12 @@ WriteMakefile(
 
   $mozembed->get_makefile_vars,
 
-  EXTRA_META => qq/
-$configure_requires
-/,
+  META_MERGE => {
+    configure_requires => \%pre_reqs,
+    no_index => {
+      file => [@xs_files],
+    },
+  },
 );
 
 sub MY::postamble {

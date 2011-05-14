@@ -1,3 +1,13 @@
+=== ChangeLog discontinued ===
+
+	With the move to git, we stop maintaining a separate ChangeLog and
+	rely on proper commit messages instead.
+
+2008-11-20  Torsten Schoenfeld  <kaffeetisch@gmx.de>
+
+	* Makefile.PL: Catch exceptions thrown by EU::PkgConfig so that we
+	can abort properly.
+
 2008-08-25  Torsten Schoenfeld  <kaffeetisch@gmx.de>
 
 	* MozEmbed.pm

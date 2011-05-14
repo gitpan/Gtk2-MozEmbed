@@ -15,7 +15,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * $Header: /cvsroot/gtk2-perl/gtk2-perl-xs/Gtk2-MozEmbed/gtkmozembed2perl.h,v 1.4 2005/04/11 22:30:19 kaffeetisch Exp $
+ * $Id$
  */
 
 #ifndef _GTKMOZEMBED2PERL_H_
